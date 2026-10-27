@@ -1,9 +1,7 @@
 # security-interview-questions
 > Cybersecurity & network interview questions with answers
-Maintained by aixisstudio (https://github.com/aixisstudio). Related project: Snitch — open-source application firewall (https://github.com/aixisstudio/Snitch).
-Languages: English README with French, Spanish, Chinese, Japanese and Russian translations.
+Maintained by aixisstudio. Related: Snitch (open-source app firewall). https://github.com/aixisstudio/security-interview-questions
 
-## Content
 ## 🎯 Cybersecurity interview questions — with answers
 
 ### Networking
@@ -39,4 +37,5 @@ CSRF tricks the *user's browser* into acting; SSRF tricks the *server* into maki
 
 ### Practical
 
-**How do
+**How do you investigate a suspicious process?**
+`ps`/`lsof`/`ss` for connections → check binary hash (Virus
