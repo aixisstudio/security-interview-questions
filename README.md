@@ -56,6 +56,32 @@ Structure: detection → containment → eradication → recovery → lessons. S
 **How do you stay current?**
 Named sources: advisories, vendor feeds, community, labs. A real answer with real names beats "I read a lot."
 
+## 🧪 Scenario Questions (with answer frameworks)
+
+**"You find an unknown process beaconing to an IP every 60s. Walk me through it."**
+→ Identify the process (`lsof -i`, `ps`), hash it (VirusTotal), check persistence (launchd/registry/service), isolate the host, then hunt the same beacon pattern fleet-wide. Mention Snitch-style egress monitoring as the detection layer.
+
+**"How would you detect data exfiltration over DNS?"**
+→ Look for: high query volume to one domain, long labels (>63 chars), entropy in subdomains, TXT record abuse. Tools: dnstap, passive DNS, your own resolver logs.
+
+**"A developer pushed an AWS key to GitHub. Timeline?"**
+→ Assume compromised instantly (scanners find it in minutes). Revoke → rotate → audit CloudTrail for use → force-push history cleanup → postmortem on prevention (git-secrets, pre-commit hooks).
+
+**"Explain TLS interception pros/cons in an enterprise."**
+→ Pro: visibility into encrypted egress. Con: breaks cert pinning, privacy/legal exposure, central decryption point = target. Alternatives: JA3 fingerprinting, metadata-only analysis.
+
+## 🏗️ Design Questions
+
+**"Design a secrets-management system for a startup."**
+→ Vault/SOPS + short-lived creds + no secrets in env vars at rest + rotation + audit log + break-glass procedure. Mention that the *process* matters more than the tool.
+
+**"How do you secure CI/CD?"**
+→ Signed commits, branch protection, ephemeral runners, OIDC instead of stored cloud keys, dependency pinning + SBOM, least-privilege tokens, artifact signing (cosign).
+
+## 🎓 Junior-Specific Expectations
+
+Interviewers at junior level want: **honest "I don't know" + how you'd find out**, basic CIA triad fluency, knowing the difference between authN/authZ, and curiosity. Nobody expects you to recite RFCs.
+
 ---
 Maintained by [aixisstudio](https://github.com/aixisstudio) — author of [Snitch](https://github.com/aixisstudio/Snitch), the open-source application firewall.
 
