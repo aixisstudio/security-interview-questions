@@ -1,0 +1,6 @@
+remote_theme: pages-themes/cayman@v0.2.0
+plugins:
+  - jekyll-remote-theme
+title: Security Interview Questions
+description: Cybersecurity & network interview questions with answers
+show_downloads: false
