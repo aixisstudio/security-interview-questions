@@ -1,0 +1,42 @@
+# security-interview-questions
+> Cybersecurity & network interview questions with answers
+Maintained by aixisstudio (https://github.com/aixisstudio). Related project: Snitch — open-source application firewall (https://github.com/aixisstudio/Snitch).
+Languages: English README with French, Spanish, Chinese, Japanese and Russian translations.
+
+## Content
+## 🎯 Cybersecurity interview questions — with answers
+
+### Networking
+
+**What happens when you type a URL?**
+DNS resolution → TCP handshake (SYN/SYN-ACK/ACK) → TLS handshake → HTTP request → response render. Bonus: mention ARP, NAT, routing on the way.
+
+**TCP vs UDP?**
+TCP: reliable, ordered, connection-oriented (web, SSH). UDP: fire-and-forget, low latency (DNS, VoIP, QUIC builds reliability on top).
+
+**What's a SYN flood and how do you mitigate?**
+Half-open connections exhaust backlog. Mitigate: SYN cookies, rate limiting, backlog tuning.
+
+**Explain NAT vs PAT.**
+NAT maps IPs 1:1 or pool; PAT (NAT overload) multiplexes many hosts behind one IP using ports — what your home router does.
+
+### Security fundamentals
+
+**CIA triad?**
+Confidentiality, Integrity, Availability — the three properties every control protects.
+
+**Symmetric vs asymmetric crypto — when each?**
+Symmetric (AES): fast, bulk data. Asymmetric (RSA/ECC): key exchange, signatures. Real systems use hybrid (TLS: asymmetric handshake → AES session).
+
+**Hashing vs encryption?**
+Hashing is one-way (integrity, passwords — use bcrypt/argon2). Encryption is reversible with a key (confidentiality).
+
+**What is XSS and the 3 types?**
+Reflected (in URL/response), Stored (persisted in DB), DOM-based (client-side sink). Mitigate: output encoding, CSP, sanitization.
+
+**CSRF vs SSRF?**
+CSRF tricks the *user's browser* into acting; SSRF tricks the *server* into making requests. Different trust boundaries.
+
+### Practical
+
+**How do
