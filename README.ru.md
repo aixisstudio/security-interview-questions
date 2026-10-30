@@ -4,85 +4,83 @@
 
 Вопросы на собеседовании по кибербезопасности с ответами
 
-_Подробное содержимое (списки, ссылки, описания) ведётся на английском — разделы ниже помогут сориентироваться._
+Вопросы интервью по кибербезопасности - с ответами
 
-## 🎯 Cybersecurity interview questions — with answers
+### Сеть
 
-### Networking
+Что происходит, когда вы вводите URL?
+Разрешение DNS → рукопожатие TCP (SYN/SYN-ACK/ACK) → рукопожатие TLS → HTTP-запрос → рендер ответа. Бонус: упоминание ARP, NAT, маршрутизации на пути.
 
-**What happens when you type a URL?**
-DNS resolution → TCP handshake (SYN/SYN-ACK/ACK) → TLS handshake → HTTP request → response render. Bonus: mention ARP, NAT, routing on the way.
+TCP против UDP?**
+TCP: надежный, упорядоченный, ориентированный на соединение (веб, SSH). UDP: Fire-and-forget, низкая задержка (DNS, VoIP, QUIC повышает надежность сверху).
 
-**TCP vs UDP?**
-TCP: reliable, ordered, connection-oriented (web, SSH). UDP: fire-and-forget, low latency (DNS, VoIP, QUIC builds reliability on top).
+Что такое SYN-наводнение и как его смягчить?
+Полуоткрытые соединения истощают отставание. Mitigate: куки SYN, ограничение скорости, настройка отставания.
 
-**What's a SYN flood and how do you mitigate?**
-Half-open connections exhaust backlog. Mitigate: SYN cookies, rate limiting, backlog tuning.
+** Объясните NAT vs PAT.**
+NAT отображает IP-адреса 1:1 или пул; PAT (перегрузка NAT) мультиплексирует множество хостов за одним IP-адресом с использованием портов - что делает ваш домашний маршрутизатор.
 
-**Explain NAT vs PAT.**
-NAT maps IPs 1:1 or pool; PAT (NAT overload) multiplexes many hosts behind one IP using ports — what your home router does.
+### Основы безопасности
 
-### Security fundamentals
+**Триада ЦРУ**
+Конфиденциальность, целостность, доступность — три свойства, которые защищает каждый контроль.
 
-**CIA triad?**
-Confidentiality, Integrity, Availability — the three properties every control protects.
+**Симметричный против асимметричного крипто — когда каждый? **
+Симметричные (AES): быстрые, объемные данные. Асимметричный (RSA/ECC): обмен ключами, подписи. Реальные системы используют гибридные (TLS: асимметричное рукопожатие → AES сессия).
 
-**Symmetric vs asymmetric crypto — when each?**
-Symmetric (AES): fast, bulk data. Asymmetric (RSA/ECC): key exchange, signatures. Real systems use hybrid (TLS: asymmetric handshake → AES session).
+** Хеширование против шифрования?**
+Хеширование является односторонним (целостность, пароли — используйте bcrypt/argon2). Шифрование обратимо с помощью ключа (конфиденциальность).
 
-**Hashing vs encryption?**
-Hashing is one-way (integrity, passwords — use bcrypt/argon2). Encryption is reversible with a key (confidentiality).
+Что такое XSS и 3 типа?
+Reflected (в URL/response), Stored (сохраняется в DB), DOM-based (клиентская раковина). Mitigate: выходное кодирование, CSP, дезинфицирование.
 
-**What is XSS and the 3 types?**
-Reflected (in URL/response), Stored (persisted in DB), DOM-based (client-side sink). Mitigate: output encoding, CSP, sanitization.
+**CSRF против SSRF?**
+CSRF обманывает браузер пользователя в действии; SSRF обманывает сервера в выполнении запросов. Различные границы доверия.
 
-**CSRF vs SSRF?**
-CSRF tricks the *user's browser* into acting; SSRF tricks the *server* into making requests. Different trust boundaries.
+###Практика
 
-### Practical
+Как расследовать подозрительный процесс?
+`ps`/`lsof`/`ss` для соединений → проверка двоичного хэша (VirusTotal) → родительское дерево процессов → механизмы устойчивости (крон, запуск, реестр) → сетевые индикаторы (маяки, домены, выглядящие как DGA).
 
-**How do you investigate a suspicious process?**
-`ps`/`lsof`/`ss` for connections → check binary hash (VirusTotal) → parent process tree → persistence mechanisms (cron, launchd, registry) → network indicators (beaconing, DGA-looking domains).
+Пользователь сообщает, что его ноутбук «говорит с сервером в стране, которую он не знает». Первые шаги.**
+Определите процесс, владеющий соединением (для этого существуют инструменты видимости для каждого процесса, такие как [Snitch] (https://github.com/aixisstudio/Snitch), проверьте репутацию домена, посмотрите на интервалы маяков, снимок перед убийством.
 
-**A user reports their laptop "talks to a server in a country they don't know." First steps?**
-Identify the process owning the connection (per-process visibility tools like [Snitch](https://github.com/aixisstudio/Snitch) exist for this), check domain reputation, look at beaconing intervals, snapshot before killing.
+** Как используется DNS? **
+Туннелирование (данные в запросах TXT), DGA для C2, DNS-over-HTTPS для уклонения от видимости, отравление кэшем (в основном фиксируется рандомизацией + DNSSEC).
 
-**How does DNS get abused?**
-Tunneling (data in TXT queries), DGA for C2, DNS-over-HTTPS to evade visibility, cache poisoning (mostly fixed by randomization + DNSSEC).
+### Поведение
 
-### Behavioral
+**Расскажи мне об инциденте с безопасностью, с которым ты столкнулся.**
+Структура: обнаружение → сдерживание → искоренение → восстановление → уроки. Покажите, что обзор после инцидента имеет большее значение, чем героизм.
 
-**Tell me about a security incident you handled.**
-Structure: detection → containment → eradication → recovery → lessons. Show you know post-incident review matters more than heroics.
+** Как оставаться в курсе событий? **
+Названы источники: консультации, каналы поставщиков, сообщество, лаборатории. Реальный ответ с реальными именами бьет: «Я много читаю».
 
-**How do you stay current?**
-Named sources: advisories, vendor feeds, community, labs. A real answer with real names beats "I read a lot."
+## ) Сценарные вопросы (с ответами)
 
-## 🧪 Scenario Questions (with answer frameworks)
+Вы находите неизвестный процесс, маячащий к IP каждые 60 лет. Пройди меня через это.
+Выявить процесс (`lsof -i`, `ps`), хешировать его (VirusTotal), проверить стойкость (запуск/регистрация/сервис), изолировать хост, а затем охотиться за тем же маяковым рисунком в масштабе всего парка. Упомяните мониторинг выхода в стиле Snitch в качестве слоя обнаружения.
 
-**"You find an unknown process beaconing to an IP every 60s. Walk me through it."**
-→ Identify the process (`lsof -i`, `ps`), hash it (VirusTotal), check persistence (launchd/registry/service), isolate the host, then hunt the same beacon pattern fleet-wide. Mention Snitch-style egress monitoring as the detection layer.
+«Как бы вы обнаружили эксфильтрацию данных через DNS?»
+Ищите: высокий объем запросов к одному домену, длинные метки (> 63 заголовок), энтропия в поддоменах, злоупотребление записью TXT. Инструменты: dnstap, пассивный DNS, собственные журналы-решители.
 
-**"How would you detect data exfiltration over DNS?"**
-→ Look for: high query volume to one domain, long labels (>63 chars), entropy in subdomains, TXT record abuse. Tools: dnstap, passive DNS, your own resolver logs.
+**"Разработчик подтолкнул ключ AWS к GitHub". Сроки? **
+Допустим, скомпрометирован мгновенно (сканеры находят его за считанные минуты). Revoke → rotate → аудит CloudTrail для использования → силовая очистка истории → посмертная профилактика (git-secrets, pre-commit hooks).
 
-**"A developer pushed an AWS key to GitHub. Timeline?"**
-→ Assume compromised instantly (scanners find it in minutes). Revoke → rotate → audit CloudTrail for use → force-push history cleanup → postmortem on prevention (git-secrets, pre-commit hooks).
+** «Объясните, что TLS перехватываю плюсы и минусы на предприятии».**
+→ Pro: видимость зашифрованного выхода. Con: ломает пиннинг, конфиденциальность / юридическое воздействие, центральная точка дешифрования = цель. Альтернативы: дактилоскопия JA3, анализ только метаданных.
 
-**"Explain TLS interception pros/cons in an enterprise."**
-→ Pro: visibility into encrypted egress. Con: breaks cert pinning, privacy/legal exposure, central decryption point = target. Alternatives: JA3 fingerprinting, metadata-only analysis.
+##  ️ Вопросы дизайна
 
-## 🏗️ Design Questions
+«Создать систему управления секретами для стартапа».
+→ Убежище / SOPS + недолговечные креды + отсутствие секретов в варах в покое + ротация + журнал аудита + процедура брейк-стекла. Упомяните, что процесс имеет большее значение, чем инструмент.
 
-**"Design a secrets-management system for a startup."**
-→ Vault/SOPS + short-lived creds + no secrets in env vars at rest + rotation + audit log + break-glass procedure. Mention that the *process* matters more than the tool.
+«Как вы защищаете CI/CD?»
+→ Подписанные фиксации, защита ветвей, эфемерные бегуны, OIDC вместо хранимых облачных ключей, пиннинг зависимостей + SBOM, токены с наименьшими привилегиями, подписание артефактов (cosign).
 
-**"How do you secure CI/CD?"**
-→ Signed commits, branch protection, ephemeral runners, OIDC instead of stored cloud keys, dependency pinning + SBOM, least-privilege tokens, artifact signing (cosign).
+## ci Детские ожидания
 
-## 🎓 Junior-Specific Expectations
-
-Interviewers at junior level want: **honest "I don't know" + how you'd find out**, basic CIA triad fluency, knowing the difference between authN/authZ, and curiosity. Nobody expects you to recite RFCs.
+Интервьюеры на младшем уровне хотят: ** честное «Я не знаю» + как бы вы узнали **, базовая беглость триады ЦРУ, знание разницы между authN/authZ и любопытство. Никто не ожидает, что вы будете читать RFC.
 
 ---
 ## Участие
