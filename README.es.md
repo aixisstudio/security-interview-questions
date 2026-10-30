@@ -4,85 +4,83 @@
 
 Preguntas de entrevista de ciberseguridad con respuestas
 
-_El contenido detallado (listas, enlaces, descripciones) está en inglés por mantenibilidad — las secciones siguientes te guían._
-
-## 🎯 Cybersecurity interview questions — with answers
+## 🎯 Ciberseguridad entrevista preguntas - con respuestas
 
 ### Networking
 
-**What happens when you type a URL?**
-DNS resolution → TCP handshake (SYN/SYN-ACK/ACK) → TLS handshake → HTTP request → response render. Bonus: mention ARP, NAT, routing on the way.
+**¿Qué pasa cuando escribes una URL?**
+Resolución DNS → TCP Handhake (SYN/SYN-ACK/ACK) → TLS handshake → HTTP petición → respuesta render. Bono: mencione ARP, NAT, routing en el camino.
 
 **TCP vs UDP?**
-TCP: reliable, ordered, connection-oriented (web, SSH). UDP: fire-and-forget, low latency (DNS, VoIP, QUIC builds reliability on top).
+TCP: fiable, ordenado, orientado a la conexión (web, SSH). UDP: fuego-y-olvidado, baja latencia (DNS, VoIP, QUIC construye fiabilidad en la parte superior).
 
-**What's a SYN flood and how do you mitigate?**
-Half-open connections exhaust backlog. Mitigate: SYN cookies, rate limiting, backlog tuning.
+**¿Qué es una inundación SYN y cómo mitiga?**
+Medias conexiones abiertas agotan el atraso. Mitigate: Cookies SYN, límite de tarifas, afinación atrasada.
 
-**Explain NAT vs PAT.**
-NAT maps IPs 1:1 or pool; PAT (NAT overload) multiplexes many hosts behind one IP using ports — what your home router does.
+** Explique NAT vs PAT.**
+NAT mapas IPs 1:1 o piscina; PAT (sobrecarga de NAT) multiplexes muchos hosts detrás de una IP usando puertos — lo que hace su router de casa.
 
-### Security fundamentals
+## Seguridad fundamentals
 
-**CIA triad?**
-Confidentiality, Integrity, Availability — the three properties every control protects.
+¿La CIA Triad?
+Confidencialidad, Integridad, Disponibilidad — las tres propiedades que cada control protege.
 
-**Symmetric vs asymmetric crypto — when each?**
-Symmetric (AES): fast, bulk data. Asymmetric (RSA/ECC): key exchange, signatures. Real systems use hybrid (TLS: asymmetric handshake → AES session).
+**Symmetric vs asymmetric crypto - cuando cada uno?**
+Symmetric (AES): datos rápidos y a granel. Asimetría (RSA/ECC): intercambio clave, firmas. Los sistemas reales utilizan híbridos (TLS: apretón de manos asimétrico → AES sesión).
 
-**Hashing vs encryption?**
-Hashing is one-way (integrity, passwords — use bcrypt/argon2). Encryption is reversible with a key (confidentiality).
+¿Hashing vs encryption?
+La piratería es unidireccional (integridad, contraseñas — use bcrypt/argon2). El cifrado es reversible con una clave (confidencialidad).
 
-**What is XSS and the 3 types?**
-Reflected (in URL/response), Stored (persisted in DB), DOM-based (client-side sink). Mitigate: output encoding, CSP, sanitization.
+**¿Qué es XSS y los 3 tipos?**
+Reflected (in URL/response), Stored (persisted in DB), DOM-based (client-side sink). Mitigate: codificación de salida, CSP, saneamiento.
 
-**CSRF vs SSRF?**
-CSRF tricks the *user's browser* into acting; SSRF tricks the *server* into making requests. Different trust boundaries.
+**CSRF vs SSRF**
+CSRF engaña al navegador de usuario* para actuar; SSRF engaña al *servidor* para hacer solicitudes. Diferentes límites de confianza.
 
-### Practical
+################################################################################################################################################################################################################################################################
 
-**How do you investigate a suspicious process?**
-`ps`/`lsof`/`ss` for connections → check binary hash (VirusTotal) → parent process tree → persistence mechanisms (cron, launchd, registry) → network indicators (beaconing, DGA-looking domains).
+**¿Cómo investigas un proceso sospechoso?**
+`ps`/`lsof`/`ss` para conexiones → check binario hash (VirusTotal) → árbol de proceso de padres → mecanismos de persistencia (cron, lanzado, registro) → indicadores de red (beaconing, DGA-mirando dominios).
 
-**A user reports their laptop "talks to a server in a country they don't know." First steps?**
-Identify the process owning the connection (per-process visibility tools like [Snitch](https://github.com/aixisstudio/Snitch) exist for this), check domain reputation, look at beaconing intervals, snapshot before killing.
+**Un usuario informa que su laptop "habla a un servidor en un país que no conocen". ¿Primeros pasos?**
+Identificar el proceso de propiedad de la conexión (por proceso existen herramientas de visibilidad como [Snitch] (https://github.com/aixisstudio/Snitch) para esto), comprobar la reputación del dominio, ver intervalos de programación, instantánea antes de matar.
 
-**How does DNS get abused?**
-Tunneling (data in TXT queries), DGA for C2, DNS-over-HTTPS to evade visibility, cache poisoning (mostly fixed by randomization + DNSSEC).
+**¿Cómo se abusa de DNS?**
+Tunneling (datos en las consultas TXT), DGA para C2, DNS-over-HTTPS para evadir la visibilidad, envenenamiento por caché (principalmente fijado por azarización + DNSSEC).
 
-### Behavioral
+## Behavioral
 
-**Tell me about a security incident you handled.**
-Structure: detection → containment → eradication → recovery → lessons. Show you know post-incident review matters more than heroics.
+*Dime sobre un incidente de seguridad que manejaste*
+Estructura: detección → contención → erradicación → recuperación → lecciones. Mostrar que sabes que la revisión post-incidente importa más que heroicos.
 
-**How do you stay current?**
-Named sources: advisories, vendor feeds, community, labs. A real answer with real names beats "I read a lot."
+**¿Cómo te mantienes actual?**
+Fuentes nombradas: asesorías, piensos de proveedores, comunidad, laboratorios. Una respuesta real con nombres reales gana "Leo mucho".
 
-## 🧪 Scenario Questions (with answer frameworks)
+## 🧪 Scenario Preguntas (con marcos de respuesta)
 
-**"You find an unknown process beaconing to an IP every 60s. Walk me through it."**
-→ Identify the process (`lsof -i`, `ps`), hash it (VirusTotal), check persistence (launchd/registry/service), isolate the host, then hunt the same beacon pattern fleet-wide. Mention Snitch-style egress monitoring as the detection layer.
+**"Usted encuentra un proceso desconocido acuñando a una IP cada 60s. Atravesadme."**
+→ Identificar el proceso (`lsof -i`, `ps`), hash it (VirusTotal), comprobar la persistencia (lanchd/registry/service), aislar el anfitrión, luego cazar el mismo patrón de baliza en toda la flota. Mention Snitch-style egress monitoring as the detection layer.
 
-**"How would you detect data exfiltration over DNS?"**
-→ Look for: high query volume to one domain, long labels (>63 chars), entropy in subdomains, TXT record abuse. Tools: dnstap, passive DNS, your own resolver logs.
+** "¿Cómo detectaría la exfiltración de datos sobre DNS?"**
+→ Buscar: alto volumen de consulta a un dominio, etiquetas largas ( &lt;63 chars), entropía en subdominios, TXT abuso de registro. Herramientas: dnstap, DNS pasivo, sus propios registros de resolución.
 
-**"A developer pushed an AWS key to GitHub. Timeline?"**
-→ Assume compromised instantly (scanners find it in minutes). Revoke → rotate → audit CloudTrail for use → force-push history cleanup → postmortem on prevention (git-secrets, pre-commit hooks).
+**"Un desarrollador empujó una llave AWS a GitHub. ¿Tiempo?"**
+→ Assume comprometido instantáneamente (los escáneres lo encuentran en minutos). Revoke → rotar → auditar CloudTrail para uso → fuerza-push historia limpieza → postmortem en prevención (git-secrets, ganchos pre-commit).
 
-**"Explain TLS interception pros/cons in an enterprise."**
-→ Pro: visibility into encrypted egress. Con: breaks cert pinning, privacy/legal exposure, central decryption point = target. Alternatives: JA3 fingerprinting, metadata-only analysis.
+**"Explicar producciones/cons de interceptación de TLS en una empresa."**
+→ Pro: visibilidad en egresos cifrados. Con: rompe cert pinning, privacidad/exposición legal, punto central de descifrado = objetivo. Alternativas: huella dactilar JA3, análisis de metadatos solo.
 
-## 🏗️ Design Questions
+Preguntas de diseño
 
-**"Design a secrets-management system for a startup."**
-→ Vault/SOPS + short-lived creds + no secrets in env vars at rest + rotation + audit log + break-glass procedure. Mention that the *process* matters more than the tool.
+**"Diseñar un sistema de gestión de secretos para una puesta en marcha."**
+→ Vault/SOPS + credos de corta duración + no secretos en env vars en reposo + rotación + registro de auditoría + procedimiento de break-glass. Mención que el *proceso* importa más que la herramienta.
 
-**"How do you secure CI/CD?"**
-→ Signed commits, branch protection, ephemeral runners, OIDC instead of stored cloud keys, dependency pinning + SBOM, least-privilege tokens, artifact signing (cosign).
+¿Cómo aseguras el CI/CD?**
+→ Firmas firmadas, protección de ramas, corredores efímeros, OIDC en lugar de las teclas de nube almacenadas, dependencia pinning + SBOM, fichas de menor privilegio, firma de artefactos (cosign).
 
-## 🎓 Junior-Specific Expectations
+## І Junior-Specific Expectations
 
-Interviewers at junior level want: **honest "I don't know" + how you'd find out**, basic CIA triad fluency, knowing the difference between authN/authZ, and curiosity. Nobody expects you to recite RFCs.
+Los entrevistadores de nivel inferior quieren: **honest "No lo sé" + cómo lo descubrirías**, fluidez básica de la CIA, sabiendo la diferencia entre authN/authZ, y curiosidad. Nadie espera que recite RFCs.
 
 ---
 ## Contribuir
