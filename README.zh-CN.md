@@ -4,85 +4,83 @@
 
 网络安全与网络工程面试问答
 
-_详细内容（列表、链接、描述）以英文维护 — 以下章节为你指引。_
+^ QQ网络安全采访问题——有答案.
 
-## 🎯 Cybersecurity interview questions — with answers
+* 联网
 
-### Networking
+** 当你输入一个 URL 时会发生什么? **
+DNS决议 → TCP握手(SYN/SYN-ACK/ACK) → TLS握手 → HTTP请求 → 响应提供. 奖金:提到ARP,NAT,途中的路线.
 
-**What happens when you type a URL?**
-DNS resolution → TCP handshake (SYN/SYN-ACK/ACK) → TLS handshake → HTTP request → response render. Bonus: mention ARP, NAT, routing on the way.
+** TCP对UDP? **
+TCP:可靠,订购,面向连接(web,SSH). UDP:火与遗忘,低空(DNS,VoIP,QUIC在顶部建立可靠性).
 
-**TCP vs UDP?**
-TCP: reliable, ordered, connection-oriented (web, SSH). UDP: fire-and-forget, low latency (DNS, VoIP, QUIC builds reliability on top).
+** 什么是SYN洪水,你如何缓解? **
+半开式连接已耗尽积压。 减号:SYN cookie,速率限制,积压调音.
 
-**What's a SYN flood and how do you mitigate?**
-Half-open connections exhaust backlog. Mitigate: SYN cookies, rate limiting, backlog tuning.
+** 解释NAT诉PAT。 **
+NAT映射 IP 1: 1 或 pool; PAT (NAT 超载) 使用端口将一个IP背后的许多主机进行多极化——您家的路由器是做什么的.
 
-**Explain NAT vs PAT.**
-NAT maps IPs 1:1 or pool; PAT (NAT overload) multiplexes many hosts behind one IP using ports — what your home router does.
+安全基本要素
 
-### Security fundamentals
+** CIA 三人组? **
+机密性、完整性、可用性——这三种财产都受到保护。
 
-**CIA triad?**
-Confidentiality, Integrity, Availability — the three properties every control protects.
+** 对称性对非对称密码——每个何时? **
+对称(AES):快速,批量的数据. 不对称(RSA/ECC):密钥交换,签名. 真正的系统使用杂交(TLS:不对称握手 ~ AES会话).
 
-**Symmetric vs asymmetric crypto — when each?**
-Symmetric (AES): fast, bulk data. Asymmetric (RSA/ECC): key exchange, signatures. Real systems use hybrid (TLS: asymmetric handshake → AES session).
+{\fn黑体\fs22\bord1\shad0\3aHBE\4aH00\fscx67\fscy66\2cHFFFFFF\3cH808080}哈兴对加密?
+Hashing是单向的(完整性,密码——使用bcrypt/argon2). 加密用密钥可逆( 机密性) 。
 
-**Hashing vs encryption?**
-Hashing is one-way (integrity, passwords — use bcrypt/argon2). Encryption is reversible with a key (confidentiality).
+**什么是SS和3种类型? **
+反射(在 URL/应答中),存储(在 DB 中存在),基于 DOM(客户端槽). 消毒:输出编码,CSP,消毒.
 
-**What is XSS and the 3 types?**
-Reflected (in URL/response), Stored (persisted in DB), DOM-based (client-side sink). Mitigate: output encoding, CSP, sanitization.
+** 中国SRF vs SSRF? **
+CSRF 欺骗 *user 的浏览器 * 进行动作; SSRF 欺骗 * 服务器 * 进行请求. 不同的信任界限。
 
-**CSRF vs SSRF?**
-CSRF tricks the *user's browser* into acting; SSRF tricks the *server* into making requests. Different trust boundaries.
+实际
 
-### Practical
+** 你如何调查可疑过程? **
+`ps`/`lsof`/`ss`,用于连接 – 检查二进制散列(VirusTotal) – 母进程树 – 持久性机制(cron, 启动, 注册) – 网络指标(beconing, DGA外观域).
 
-**How do you investigate a suspicious process?**
-`ps`/`lsof`/`ss` for connections → check binary hash (VirusTotal) → parent process tree → persistence mechanisms (cron, launchd, registry) → network indicators (beaconing, DGA-looking domains).
+**一个用户报告他们的笔记本电脑"跟一个他们不知道的国家的服务器通话". 第一步? **
+识别拥有连接的程序(每个进程可见度工具,如[Snitch](https://github.com/aixisstudio/Snitch)存在此工具),检查域名,查看信标间隔,在杀前快照.
 
-**A user reports their laptop "talks to a server in a country they don't know." First steps?**
-Identify the process owning the connection (per-process visibility tools like [Snitch](https://github.com/aixisstudio/Snitch) exist for this), check domain reputation, look at beaconing intervals, snapshot before killing.
+** DNS是如何被滥用的? **
+TXT查询中的数据),DGA用于C2,DNS-over-HTTPS以逃避可见度,缓存中毒(大多由随机化+DNSSEC固定).
 
-**How does DNS get abused?**
-Tunneling (data in TXT queries), DGA for C2, DNS-over-HTTPS to evade visibility, cache poisoning (mostly fixed by randomization + DNSSEC).
+行为
 
-### Behavioral
+告诉我你处理过的安全事件
+结构:侦测 遏制 铲除 恢复 经验教训. 显示你知道事件后审查的重要性 而不是英雄。
 
-**Tell me about a security incident you handled.**
-Structure: detection → containment → eradication → recovery → lessons. Show you know post-incident review matters more than heroics.
+** 你怎么保持时态? **
+命名来源:咨询,供应商饲料,社区,实验室. 真正有真名的答案是"我读了很多".
 
-**How do you stay current?**
-Named sources: advisories, vendor feeds, community, labs. A real answer with real names beats "I read a lot."
+□□□□□□ 假想问题(附有答案框架)
 
-## 🧪 Scenario Questions (with answer frameworks)
+**"你发现一个未知的过程,每60秒向一个IP发出信号. 让我通过它。” **
+确定过程(`lsof -i`,`ps`),散列(VirusTotal),检查持久性(发射/登记/服务),隔离宿主,然后在全舰队范围内捕捉相同的信标图案. 提及Snitch风格的Egress监测作为检测层.
 
-**"You find an unknown process beaconing to an IP every 60s. Walk me through it."**
-→ Identify the process (`lsof -i`, `ps`), hash it (VirusTotal), check persistence (launchd/registry/service), isolate the host, then hunt the same beacon pattern fleet-wide. Mention Snitch-style egress monitoring as the detection layer.
+**"你如何检测数据在DNS上的过滤?"**
+^ 寻找:高查询量到一个域,长标签(>63个字符),子域中的 en,TXT记录滥用. 工具:dnstap,被动DNS,你自己的解析器日志.
 
-**"How would you detect data exfiltration over DNS?"**
-→ Look for: high query volume to one domain, long labels (>63 chars), entropy in subdomains, TXT record abuse. Tools: dnstap, passive DNS, your own resolver logs.
+**"一个开发者将一个AWS密钥推向了GitHub. 时间表? **
+- 假设瞬间就暴露了(扫描机几分钟后就会发现) 废除 – 轮换 – 审计 CloudTrail供使用 – 强行推倒历史清理 – 关于预防的尸检(git-secrets, pre-pmit hooks).
 
-**"A developer pushed an AWS key to GitHub. Timeline?"**
-→ Assume compromised instantly (scanners find it in minutes). Revoke → rotate → audit CloudTrail for use → force-push history cleanup → postmortem on prevention (git-secrets, pre-commit hooks).
+**"解释企业中的TLS截取亲信/康信"**.
++ Pro:能见度进入加密的Egress. Con:断开cert pinning,隐私/合法曝光,中央解密点=目标. 替代品:JA3指纹,只分析元数据.
 
-**"Explain TLS interception pros/cons in an enterprise."**
-→ Pro: visibility into encrypted egress. Con: breaks cert pinning, privacy/legal exposure, central decryption point = target. Alternatives: JA3 fingerprinting, metadata-only analysis.
+# # # 设计问题
 
-## 🏗️ Design Questions
+**"为启动设计秘密管理制度"**.
++ Vault/SOPS + 短寿命的证明 + 休息时在env vars中无秘密 + 旋转 + 审计日志 + 破镜程序. 提及 * 进程 * 比工具更重要 。
 
-**"Design a secrets-management system for a startup."**
-→ Vault/SOPS + short-lived creds + no secrets in env vars at rest + rotation + audit log + break-glass procedure. Mention that the *process* matters more than the tool.
+**"如何确保CI/CD的安全?"**
+· 签署承诺、分枝保护、麻风跑车、OIDC而不是储存的云键、依赖针+SBOM、最低特权的标志、文物签名(签名)。
 
-**"How do you secure CI/CD?"**
-→ Signed commits, branch protection, ephemeral runners, OIDC instead of stored cloud keys, dependency pinning + SBOM, least-privilege tokens, artifact signing (cosign).
+□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□
 
-## 🎓 Junior-Specific Expectations
-
-Interviewers at junior level want: **honest "I don't know" + how you'd find out**, basic CIA triad fluency, knowing the difference between authN/authZ, and curiosity. Nobody expects you to recite RFCs.
+初级采访者想要:**诚实的"我不知道"+你会如何发现**,基本CIA三部曲流畅,知道authN/AuthZ的区别,以及好奇心. 没人希望你背诵RFCs.
 
 ---
 ## 贡献
