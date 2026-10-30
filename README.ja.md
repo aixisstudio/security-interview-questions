@@ -4,85 +4,83 @@
 
 サイバーセキュリティ・ネットワーク面接の質問と回答
 
-_詳細なコンテンツ（リスト・リンク・説明）は保守のため英語です。以下のセクションがガイドになります。_
+## サイバーセキュリティのインタビュー質問 - 回答
 
-## 🎯 Cybersecurity interview questions — with answers
+###ネットワーク
 
-### Networking
+**URLを入力するとどうなりますか?**
+DNS 解像度 → TCP ハンドシェイク (SYN/SYN-ACK/ACK) → TLS ハンドシェイク → HTTP リクエスト → 応答レンダリング ボーナス: ARP, NAT, ルーティングの方法.
 
-**What happens when you type a URL?**
-DNS resolution → TCP handshake (SYN/SYN-ACK/ACK) → TLS handshake → HTTP request → response render. Bonus: mention ARP, NAT, routing on the way.
+**TCP対UDP?**
+TCP:信頼性、注文、接続指向(Web、SSH)。 UDP: 火および忘れ物、低い潜伏(DNS、VoIP、QUICは上の信頼性を造ります)。
 
-**TCP vs UDP?**
-TCP: reliable, ordered, connection-oriented (web, SSH). UDP: fire-and-forget, low latency (DNS, VoIP, QUIC builds reliability on top).
+**SYNの洪水とどのように緩和しますか?**
+ハーフオープン接続排気バックログ。 Mitigate: SYNクッキー、レート制限、バックログ調整。
 
-**What's a SYN flood and how do you mitigate?**
-Half-open connections exhaust backlog. Mitigate: SYN cookies, rate limiting, backlog tuning.
+**NATとPATの説明 **
+NAT は IP 1:1 またはプールをマップします。 PAT (NAT の積み過ぎ) は、ポートを使用して 1 つの IP の背後にある多くのホストをマップします。
 
-**Explain NAT vs PAT.**
-NAT maps IPs 1:1 or pool; PAT (NAT overload) multiplexes many hosts behind one IP using ports — what your home router does.
+###セキュリティの基礎
 
-### Security fundamentals
+**CIAのtriadか。**
+機密性、完全性、可用性 — 3つのプロパティがすべて保護します。
 
-**CIA triad?**
-Confidentiality, Integrity, Availability — the three properties every control protects.
+**Symmetric対非対称暗号 — それぞれ?**
+Symmetric(AES):高速、バルクデータ。 対称 (RSA/ECC): キー交換、署名。 実際のシステムでは、ハイブリッド(TLS:非対称ハンドシェイク→AESセッション)を使用します。
 
-**Symmetric vs asymmetric crypto — when each?**
-Symmetric (AES): fast, bulk data. Asymmetric (RSA/ECC): key exchange, signatures. Real systems use hybrid (TLS: asymmetric handshake → AES session).
+**ハッシュと暗号化?**
+ハッシュは片道(積分、パスワード — bcrypt/argon2)です。 暗号化はキー(機密性)でリバーシブルです。
 
-**Hashing vs encryption?**
-Hashing is one-way (integrity, passwords — use bcrypt/argon2). Encryption is reversible with a key (confidentiality).
+**XSSと3種類とは?**
+反射(URL/応答)、保存(DB)、DOMベース(クライアントサイドシンク)。 Mitigate:出力エンコーディング、CSP、サニタイゼーション。
 
-**What is XSS and the 3 types?**
-Reflected (in URL/response), Stored (persisted in DB), DOM-based (client-side sink). Mitigate: output encoding, CSP, sanitization.
+**CSRF 対 SSRF?**
+CSRF は、*user's browser* を操作するのを、SSRF は、*server* をリクエストにトリックします。 異なる信頼の境界。
 
-**CSRF vs SSRF?**
-CSRF tricks the *user's browser* into acting; SSRF tricks the *server* into making requests. Different trust boundaries.
+#### 実用的
 
-### Practical
+**疑わしいプロセスを調べる方法は?**
+`ps`/`lsof`/`ss` 接続 → バイナリハッシュ (VirusTotal) → 親プロセスツリー → 永続メカニズム (cron, 起動, レジストリ) → ネットワークインジケータ (beaconing, DGA-looking domains).
 
-**How do you investigate a suspicious process?**
-`ps`/`lsof`/`ss` for connections → check binary hash (VirusTotal) → parent process tree → persistence mechanisms (cron, launchd, registry) → network indicators (beaconing, DGA-looking domains).
+**利用者はノートパソコンを「知らない国でサーバーに話せる」と報告しています。 最初のステップ?**
+接続([Snitch](https://github.com/aixisstudio/Snitch)のようなプロセスの可視性ツール)を所有するプロセスを特定し、ドメインの評判をチェックし、ビーコン間隔、キルする前にスナップショットを確認します。
 
-**A user reports their laptop "talks to a server in a country they don't know." First steps?**
-Identify the process owning the connection (per-process visibility tools like [Snitch](https://github.com/aixisstudio/Snitch) exist for this), check domain reputation, look at beaconing intervals, snapshot before killing.
+**DNSが悪用される方法は?**
+トンネリング(TXT クエリのデータ)、C2 用の DGA、DNS-over-HTTPS は可視性を排除し、キャッシュ中毒 (ほとんどランダム化 + DNSSEC で固定)。
 
-**How does DNS get abused?**
-Tunneling (data in TXT queries), DGA for C2, DNS-over-HTTPS to evade visibility, cache poisoning (mostly fixed by randomization + DNSSEC).
+##行動
 
-### Behavioral
+**処理したセキュリティインシデントについて教えてください。**
+構造:検出→封入→消去→回復→レッスン。 ヒロニクスよりもポストインシデントのレビューが重要であることをお知らせします。
 
-**Tell me about a security incident you handled.**
-Structure: detection → containment → eradication → recovery → lessons. Show you know post-incident review matters more than heroics.
+**滞在期間は?**
+名前付きソース: アドバイザリー、ベンダーフィード、コミュニティ、ラボ。 実名で真の答えは「たくさん読む」と打ちます。
 
-**How do you stay current?**
-Named sources: advisories, vendor feeds, community, labs. A real answer with real names beats "I read a lot."
+## 🧪 シナリオ 質問 (回答枠付き)
 
-## 🧪 Scenario Questions (with answer frameworks)
+**「60秒ごとにIPに不正な処理が見つかります。 お問い合わせ
+→ プロセス(`lsof -i`、`ps`)を識別し、それをハッシュ(VirusTotal)、永続(launchd/registry/service)をチェックし、ホストを隔離し、同じビーコンパターンフリートワイドをハントします。 検出層としてのMention Snitch-styleのegressの監視。
 
-**"You find an unknown process beaconing to an IP every 60s. Walk me through it."**
-→ Identify the process (`lsof -i`, `ps`), hash it (VirusTotal), check persistence (launchd/registry/service), isolate the host, then hunt the same beacon pattern fleet-wide. Mention Snitch-style egress monitoring as the detection layer.
+**「DNS上でデータの浸入を検知する方法」**
+→ 参照: 1 つのドメイン、長いラベル(>63 chars)、サブドメイン、TXT レコードの乱用でエントロピーへの高い問い合わせ量。 ツール:dnstap、パッシブDNS、独自のソルバーログ。
 
-**"How would you detect data exfiltration over DNS?"**
-→ Look for: high query volume to one domain, long labels (>63 chars), entropy in subdomains, TXT record abuse. Tools: dnstap, passive DNS, your own resolver logs.
+**「開発者がAWSキーをGitHubにプッシュしました。 タイムライン?**
+→ アススメは即座に妥協する(数分で見つける)。 Revoke → 回転 → クラウド監査 使用 → 強制プッシュ履歴のクリーンアップ → 予防に関するpostmortem (git-secrets, 事前コミットのホック).
 
-**"A developer pushed an AWS key to GitHub. Timeline?"**
-→ Assume compromised instantly (scanners find it in minutes). Revoke → rotate → audit CloudTrail for use → force-push history cleanup → postmortem on prevention (git-secrets, pre-commit hooks).
+**「エンタープライズにおけるTLSのインターセプト・プロス/コンスの説明」**
+→ Pro:暗号化されたエグレスへの可視性。 Con: 証明書のピン留め、プライバシー/法的暴露、中央の復号点=ターゲットを破ります。 代替:JA3指紋、メタデータのみ解析。
 
-**"Explain TLS interception pros/cons in an enterprise."**
-→ Pro: visibility into encrypted egress. Con: breaks cert pinning, privacy/legal exposure, central decryption point = target. Alternatives: JA3 fingerprinting, metadata-only analysis.
+## ️️ デザイン質問
 
-## 🏗️ Design Questions
+**「スタートアップのための秘密管理システムの設計」**
+→ Vault/SOPS + ショート ライブ クリード + 残りの + 回転 + 監査ログ + ブレイク グラスの手順で env vars の秘密なし. *process*がツールよりも重要であるという言及。
 
-**"Design a secrets-management system for a startup."**
-→ Vault/SOPS + short-lived creds + no secrets in env vars at rest + rotation + audit log + break-glass procedure. Mention that the *process* matters more than the tool.
+**「CI/CDを安全にする方法」**
+→ 署名されたコミット、ブランチ保護、エピメラルランナー、保存されたクラウドキーの代わりにOIDC、依存性ピンニング+ SBOM、少なくとも特権トークン、アーティファクト署名(コサイン)。
 
-**"How do you secure CI/CD?"**
-→ Signed commits, branch protection, ephemeral runners, OIDC instead of stored cloud keys, dependency pinning + SBOM, least-privilege tokens, artifact signing (cosign).
+##  Juniorジュニアスペクティフィケーション
 
-## 🎓 Junior-Specific Expectations
-
-Interviewers at junior level want: **honest "I don't know" + how you'd find out**, basic CIA triad fluency, knowing the difference between authN/authZ, and curiosity. Nobody expects you to recite RFCs.
+ジュニアレベルのインタビュアー:**正直な「私は知りません」+あなたが見つけた方法**、基本的なCIAのトライアドの流暢さ、authN/authZと好奇心の違いを知っている。 RFCs をリサイトする誰も期待しません。
 
 ---
 ## 貢献
